@@ -1,16 +1,19 @@
-from flask import Flask, jsonify, request
+from flask import Flask, request
 
 app = Flask(__name__)
 
-@app.route('/hello', methods=['GET'])
-def hello():
-    return jsonify({"mensagem": "Olá, mundo!"})
+@app.get("/ping")
+def ping():
+    # Retorna JSON a partir de um dict
+    return {"mensagem": "pong"}  # Flask converte dict em JSON
 
-@app.route('/soma', methods=['POST'])
+@app.post("/soma")
 def soma():
-    dados = request.get_json()
-    resultado = dados['a'] + dados['b']
-    return jsonify({"resultado": resultado})
+    # Lê JSON do corpo da requisição
+    payload = request.get_json(silent=True) or {}
+    a = payload.get("a", 0)
+    b = payload.get("b", 0)
+    return {"resultado": a + b}, 200  # Pode retornar (body, status)
 
 if __name__ == "__main__":
     app.run(debug=True)
@@ -43,4 +46,5 @@ for pessoa in pessoas:
     print(pessoa)
 
 # Fechando conexão
+
 con.close()
